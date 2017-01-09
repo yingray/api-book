@@ -18493,59 +18493,27 @@ module.exports = function(module) {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_hello__ = __webpack_require__(10);
 
 
-const text = document.querySelector('.mdl-card__supporting-text');
+var _book = __webpack_require__(13);
+
+var _book2 = _interopRequireDefault(_book);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var text = document.querySelector('.mdl-card__supporting-text');
 
 window.testApi = function () {
-    __WEBPACK_IMPORTED_MODULE_0__api_hello__["a" /* default */].intro('', '', '').then(response => {
-        console.log(response);
+    _book2.default.intro('', '', '').then(function (response) {
         text.innerHTML = JSON.stringify(response);
-    }).catch(error => {
+    }).catch(function (error) {
         console.log(error);
         text.innerHTML = 'Oh, no!';
     });
 };
 
 /***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__index__);
-
-
-const host = "http://localhost:9000";
-
-const api_doc = {
-    intro: {
-        url: '/api/intro',
-        method: 'GET',
-        request: {
-            path: {},
-            query: {},
-            body: {}
-        },
-        response: {
-            type: 'json'
-        }
-    }
-};
-
-const init = {
-    "headers": {
-        "Accept": "application/json",
-        "Content-type": "application/json;charset=UTF-8"
-    },
-    "credentials": "include"
-};
-
-/* harmony default export */ exports["a"] = __WEBPACK_IMPORTED_MODULE_0__index___default()(host, api_doc, init);
-
-/***/ },
+/* 10 */,
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -18639,6 +18607,52 @@ var createFetch = exports.createFetch = function createFetch(param, responseMixi
         });
     };
 };
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _index = __webpack_require__(11);
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// import api from 'api-book'
+
+var host = "http://localhost:9000";
+
+var book = {
+    intro: {
+        url: '/api/intro',
+        method: 'GET',
+        request: {
+            path: {},
+            query: {},
+            body: {}
+        },
+        response: {
+            type: 'json'
+        }
+    }
+};
+
+var init = {
+    "headers": {
+        "Accept": "application/json",
+        "Content-type": "application/json;charset=UTF-8"
+    },
+    "credentials": "include"
+};
+
+exports.default = (0, _index2.default)(host, book, init);
 
 /***/ }
 /******/ ]);

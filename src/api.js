@@ -2,9 +2,9 @@ import _ from 'lodash'
 import Mustache from 'mustache'
 import { createFetch } from './fetchCreators'
 
-const isEmpty = value => value === undefined || value === null || value === '';
+export const isEmpty = value => value === undefined || value === null || value === '';
 
-const jsonToQueryString = function (obj) {
+export const jsonToQueryString = function (obj) {
     const qs = _.reduce(obj, function (result, value, key) {
         if (!_.isNull(value) && !_.isUndefined(value)) {
             if (_.isArray(value)) {
@@ -27,7 +27,7 @@ const jsonToQueryString = function (obj) {
     return '?' + qs;
 };
 
-const url = (host, url, path, query) => host + Mustache.render(url, path) + (isEmpty(query) ? '' : jsonToQueryString(query));
+export const url = (host, url, path, query) => host + Mustache.render(url, path) + (isEmpty(query) ? '' : jsonToQueryString(query));
 
 export const api = (host, config, init) => _.mapValues(config, (value, key) => (path, query, body) => createFetch({
         "url": url(host, config[key].url, path, query),

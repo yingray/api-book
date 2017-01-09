@@ -1,8 +1,8 @@
-import api from '../../index';
+import api from '../index'; // import api from 'api-book'
 
 const host = "http://localhost:9000";
 
-const api_doc = {
+const book = {
     intro: {
         url: '/api/intro',
         method: 'GET',
@@ -25,4 +25,4 @@ const init = {
     "credentials": "include"
 };
 
-export default api(host, api_doc, init);
+export default api(host, book, init);

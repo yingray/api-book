@@ -5,7 +5,7 @@ const app = express();
 const port = 9000;
 
 app.use(compression());
-app.use(express.static('./'));
+app.use(express.static('./example'));
 
 
 app.get('/', function (req, res) {
@@ -16,6 +16,7 @@ app.get('/bundle.js', function (req, res) {
     res.sendFile(path.join(__dirname, './', 'bundle.js'));
 });
 
+// RESTful API
 app.get('/api/intro', (req, res) => {
     res.json({
         name: 'yingray',
