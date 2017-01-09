@@ -1,5 +1,7 @@
 # API-Book
 
+[![Build Status](https://travis-ci.org/yingray/api-book.svg?branch=master)](https://travis-ci.org/yingray/api-book)
+
 For Front-End Development, this library is easy to generate API fetch automatically by json ONLY!
 
 為了降低前後端在操作RESTful API上的溝通成本，只要三步驟，本套件能由後端所開發出的API文件中，輕易建立出合適的API fetch，提供前端用。
@@ -53,7 +55,7 @@ For Front-End Development, this library is easy to generate API fetch automatica
 
 3. 在欲發送API處，import上列輸出模組，並互叫該模組中欲求的API：
 
-	```
+	```js
 	const path = {
 	    testId: 12345
 	};
@@ -93,11 +95,11 @@ For Front-End Development, this library is easy to generate API fetch automatica
 4. 參考本套件example資料夾內的範例檔案。
 
 	```
-		-- example              (範例資料夾)
-			- index.html         (網頁參考)
-			- index.js           (點擊後，如何呼叫API的方法)
-			- book.js            (API文本存放)
-			- bundle.js          (Webpack打包)
+	-- example              (範例資料夾)
+		- index.html         (網頁參考)
+		- index.js           (點擊後，如何呼叫API的方法)
+		- book.js            (API文本存放)
+		- bundle.js          (Webpack打包)
 	```
 
 

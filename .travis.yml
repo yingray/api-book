@@ -8,7 +8,6 @@ cache:
 branches:
   only:
   - master
-before_install:
-  - npm install -g coveralls
+  - develop
 script:
-  - npm test -- --coverage && cat ./coverage/lcov.info | coveralls
+  - npm test -- --coverage
