@@ -6,6 +6,7 @@ const port = 9000;
 
 app.use(compression());
 app.use(express.static('./example'));
+app.use('/', require('cors')());
 
 
 app.get('/', function (req, res) {

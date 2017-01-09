@@ -4,7 +4,7 @@ const host = "http://localhost:9000";
 
 const book = {
     intro: {
-        url: '/api/intro',
+        url: '/api/intro/{{testId}}',
         method: 'GET',
         request: {
             path: {},
