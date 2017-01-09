@@ -17163,24 +17163,37 @@
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_mustache__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_mustache___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_mustache__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__fetchCreators__ = __webpack_require__(3);
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.apiRedux = exports.apiTest = exports.api = undefined;
 
+var _lodash = __webpack_require__(0);
 
-const isEmpty = value => value === undefined || value === null || value === '';
+var _lodash2 = _interopRequireDefault(_lodash);
 
-const jsonToQueryString = function (obj) {
-    const qs = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.reduce(obj, function (result, value, key) {
-        if (!__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNull(value) && !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isUndefined(value)) {
-            if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isArray(value)) {
-                result += __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.reduce(value, function (result1, value1) {
-                    if (!__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNull(value1) && !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isUndefined(value1)) {
+var _mustache = __webpack_require__(5);
+
+var _mustache2 = _interopRequireDefault(_mustache);
+
+var _fetchCreators = __webpack_require__(3);
+
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
+
+var isEmpty = function isEmpty(value) {
+    return value === undefined || value === null || value === '';
+};
+
+var jsonToQueryString = function jsonToQueryString(obj) {
+    var qs = _lodash2.default.reduce(obj, function (result, value, key) {
+        if (!_lodash2.default.isNull(value) && !_lodash2.default.isUndefined(value)) {
+            if (_lodash2.default.isArray(value)) {
+                result += _lodash2.default.reduce(value, function (result1, value1) {
+                    if (!_lodash2.default.isNull(value1) && !_lodash2.default.isUndefined(value1)) {
                         result1 += key + '=' + value1 + '&';
                         return result1;
                     } else {
@@ -17198,59 +17211,83 @@ const jsonToQueryString = function (obj) {
     return '?' + qs;
 };
 
-const url = (host, url, path, query) => host + __WEBPACK_IMPORTED_MODULE_1_mustache___default.a.render(url, path) + (isEmpty(query) ? '' : jsonToQueryString(query));
+var url = function url(host, _url, path, query) {
+    return host + _mustache2.default.render(_url, path) + (isEmpty(query) ? '' : jsonToQueryString(query));
+};
 
-const api = (host, config, init) => __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.mapValues(config, (value, key) => (path, query, body) => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetchCreators__["a" /* createFetch */])({
-    "url": url(host, config[key].url, path, query),
-    "method": config[key].method,
-    "init": init,
-    "body": isEmpty(body) ? null : body
-}, config[key].response.type));
-/* harmony export (immutable) */ exports["api"] = api;
+var api = exports.api = function api(host, config, init) {
+    return _lodash2.default.mapValues(config, function (value, key) {
+        return function (path, query, body) {
+            return (0, _fetchCreators.createFetch)({
+                "url": url(host, config[key].url, path, query),
+                "method": config[key].method,
+                "init": init,
+                "body": isEmpty(body) ? null : body
+            }, config[key].response.type);
+        };
+    });
+};
 
+var apiTest = exports.apiTest = function apiTest(host, config, init) {
+    return _lodash2.default.mapValues(config, function (value, key) {
+        return function (path, query, body) {
+            return (0, _fetchCreators.createFetch)({
+                "url": url(host, config[key].url, config[key].path, config[key].query),
+                "method": config[key].method,
+                "init": init,
+                "body": isEmpty(config[key].request.body) ? null : config[key].request.body
+            }, config[key].response.type);
+        };
+    });
+};
 
-const apiTest = (host, config, init) => __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.mapValues(config, (value, key) => (path, query, body) => __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__fetchCreators__["a" /* createFetch */])({
-    "url": url(host, config[key].url, config[key].path, config[key].query),
-    "method": config[key].method,
-    "init": init,
-    "body": isEmpty(config[key].request.body) ? null : config[key].request.body
-}, config[key].response.type));
-/* harmony export (immutable) */ exports["apiTest"] = apiTest;
+var apiRedux = exports.apiRedux = function apiRedux(host, config, init) {
+    return _lodash2.default.mapValues(config, function (value, key) {
+        return function (path, query, body) {
+            return __webpack_require__(12).createFetch({
+                "url": url(host, config[key].url, path, query),
+                "method": config[key].method,
+                "init": init,
+                "body": isEmpty(body) ? null : body
+            }, config[key].response.type);
+        };
+    });
+};
 
-
-const apiRedux = (host, config, init) => __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.mapValues(config, (value, key) => (path, query, body) => __webpack_require__(12).createFetch({
-    "url": url(host, config[key].url, path, query),
-    "method": config[key].method,
-    "init": init,
-    "body": isEmpty(body) ? null : body
-}, config[key].response.type));
-/* harmony export (immutable) */ exports["apiRedux"] = apiRedux;
-
-
-/* harmony default export */ exports["default"] = api;
+exports.default = api;
 
 /***/ },
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_isomorphic_fetch__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_isomorphic_fetch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_isomorphic_fetch__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.createFetch = undefined;
 
-const createQuery = (method, body, init) => {
+__webpack_require__(4);
 
-    let query = {
+var _lodash = __webpack_require__(0);
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
+
+var createQuery = function createQuery(method, body, init) {
+
+    var query = {
         "method": method
     };
 
     if (init) {
-        query = __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.merge(query, init);
+        query = _lodash2.default.merge(query, init);
     } else {
-        query = __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.merge(query, {
+        query = _lodash2.default.merge(query, {
             "headers": {
                 "Accept": "application/json",
                 "Content-type": "application/json;charset=UTF-8"
@@ -17264,7 +17301,7 @@ const createQuery = (method, body, init) => {
     return query;
 };
 
-const checkStatus = response => {
+var checkStatus = function checkStatus(response) {
     if (response.status < 300 || response.ok || response.statusText === 'OK') {
         return response;
     } else {
@@ -17272,17 +17309,21 @@ const checkStatus = response => {
     }
 };
 
-const handleError = error => {
+var handleError = function handleError(error) {
     console.log('FetchCreator Catches Error!');
     console.log(error);
     throw error;
 };
 
-const createFetch = (param, responseMixin) => {
-    return fetch(param.url, createQuery(param.method, param.body, param.init)).then(response => checkStatus(response)).then(response => responseMixin ? response[responseMixin]() : response).catch(error => handleError(error));
+var createFetch = exports.createFetch = function createFetch(param, responseMixin) {
+    return fetch(param.url, createQuery(param.method, param.body, param.init)).then(function (response) {
+        return checkStatus(response);
+    }).then(function (response) {
+        return responseMixin ? response[responseMixin]() : response;
+    }).catch(function (error) {
+        return handleError(error);
+    });
 };
-/* harmony export (immutable) */ exports["a"] = createFetch;
-
 
 /***/ },
 /* 4 */
@@ -18508,6 +18549,9 @@ const init = {
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 module.exports = __webpack_require__(2);
 
 /***/ },
@@ -18515,28 +18559,41 @@ module.exports = __webpack_require__(2);
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_isomorphic_fetch__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_isomorphic_fetch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_isomorphic_fetch__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.createFetch = undefined;
 
-const loadingStartAction = () => ({ type: 'UTILS_LOADING_START' });
+__webpack_require__(4);
 
-const loadingEndAction = () => ({ type: 'UTILS_LOADING_END' });
+var _lodash = __webpack_require__(0);
 
-const createQuery = (method, body, init) => {
+var _lodash2 = _interopRequireDefault(_lodash);
 
-    let query = {
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
+
+var loadingStartAction = function loadingStartAction() {
+    return { type: 'UTILS_LOADING_START' };
+};
+
+var loadingEndAction = function loadingEndAction() {
+    return { type: 'UTILS_LOADING_END' };
+};
+
+var createQuery = function createQuery(method, body, init) {
+
+    var query = {
         "method": method
     };
 
     if (init) {
-        query = __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.merge(query, init);
+        query = _lodash2.default.merge(query, init);
     } else {
-        query = __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.merge(query, {
+        query = _lodash2.default.merge(query, {
             "headers": {
                 "Accept": "application/json",
                 "Content-type": "application/json;charset=UTF-8"
@@ -18550,28 +18607,38 @@ const createQuery = (method, body, init) => {
     return query;
 };
 
-const checkStatus = response => dispatch => {
-    if (response.status < 300 || response.ok || response.statusText === 'OK') {
+var checkStatus = function checkStatus(response) {
+    return function (dispatch) {
+        if (response.status < 300 || response.ok || response.statusText === 'OK') {
+            dispatch(loadingEndAction());
+            return response;
+        } else {
+            throw response;
+        }
+    };
+};
+
+var handleError = function handleError(error) {
+    return function (dispatch) {
+        console.log('FetchCreator Catches Error!');
+        console.log(error);
         dispatch(loadingEndAction());
-        return response;
-    } else {
-        throw response;
-    }
+        throw error;
+    };
 };
 
-const handleError = error => dispatch => {
-    console.log('FetchCreator Catches Error!');
-    console.log(error);
-    dispatch(loadingEndAction());
-    throw error;
+var createFetch = exports.createFetch = function createFetch(param, responseMixin) {
+    return function (dispatch) {
+        dispatch(loadingStartAction());
+        return fetch(param.url, createQuery(param.method, param.body, param.init)).then(function (response) {
+            return dispatch(checkStatus(response));
+        }).then(function (response) {
+            return responseMixin ? response[responseMixin]() : response;
+        }).catch(function (error) {
+            return dispatch(handleError(error));
+        });
+    };
 };
-
-const createFetch = (param, responseMixin) => dispatch => {
-    dispatch(loadingStartAction());
-    return fetch(param.url, createQuery(param.method, param.body, param.init)).then(response => dispatch(checkStatus(response))).then(response => responseMixin ? response[responseMixin]() : response).catch(error => dispatch(handleError(error)));
-};
-/* harmony export (immutable) */ exports["createFetch"] = createFetch;
-
 
 /***/ }
 /******/ ]);

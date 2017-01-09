@@ -1,25 +1,33 @@
 {
-  "name": "api-shuffle",
-  "version": "1.0.0",
+  "name": "api-book",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node example/server.js"
+    "start": "node example/server.js",
+    "prepublish": "babel src --out-dir lib"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yingray/api-shuffle.git"
+    "url": "git+https://github.com/yingray/api-book.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/yingray/api-shuffle/issues"
+    "url": "https://github.com/yingray/api-book/issues"
   },
-  "homepage": "https://github.com/yingray/api-shuffle#readme",
+  "homepage": "https://github.com/yingray/api-book#readme",
   "devDependencies": {
+    "babel-cli": "^6.18.0",
     "babel-core": "^6.21.0",
     "babel-loader": "^6.2.10",
     "babel-polyfill": "^6.16.0",
+    "babel-preset-env": "^1.1.5",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
     "express": "^4.14.0",
@@ -27,6 +35,7 @@
     "webpack": "^2.2.0-rc.3"
   },
   "dependencies": {
+    "babel-preset-es2015": "^6.18.0",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.2",
     "mustache": "^2.3.0"
