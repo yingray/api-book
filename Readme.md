@@ -1,6 +1,9 @@
 # API-Book
 
+[![npm](https://img.shields.io/npm/v/api-book.svg)](https://www.npmjs.com/package/api-book)
 [![Build Status](https://travis-ci.org/yingray/api-book.svg?branch=master)](https://travis-ci.org/yingray/api-book)
+[![npm](https://img.shields.io/npm/dm/api-book.svg)](https://www.npmjs.com/package/api-book)
+[![Coverage Status](https://coveralls.io/repos/github/yingray/api-book/badge.svg?branch=master)](https://coveralls.io/github/yingray/api-book?branch=master)
 
 For Front-End Development, this library is easy to generate API fetch automatically by json ONLY!
 
