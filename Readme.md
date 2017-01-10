@@ -34,7 +34,7 @@ const book = {
 
 ## Installation
 
-```
+```sh
 npm install api-book
 ```
 
@@ -49,7 +49,7 @@ The quickest way to get started with Api-book as shown below:
 
 Install the executable:
 
-```
+```sh
 npm install --save-dev api-book
 ```
 
@@ -64,10 +64,10 @@ const book = {
         method: 'GET',
         request: {
             path: {
-                	userId: 536251
+                userId: 536251
             },
             query: {
-            		picId: 12345
+            	picId: 12345
             },
             body: {}
         },
@@ -113,15 +113,15 @@ const path = {
 };
 	
 const query = {
-	 picId: 12345
+    picId: 12345
 };
 	
 const body = '';
 	
-api.intro(path, query, body)
+api.getUserPicture(path, query, body)
     .then(response => {
         /*
-			We build Reactions for calling APIs that works successfully
+            We build Reactions for calling APIs that works successfully
         */
     })
     .catch(error => {
@@ -144,14 +144,14 @@ If you want to try this library easily, please follow the instructions below:
 
 Install the executable:
 
-```
+```sh
 git clone https://github.com/yingray/api-book.git
 cd api-book
 ```
 
 Start the server:
 
-```
+```sh
 npm start
 ```
 
