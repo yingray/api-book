@@ -30,7 +30,7 @@ export const jsonToQueryString = function (obj) {
 
 export const url = (host, url, path, query) => host + Mustache.render(url, path) + (isEmpty(query) ? '' : jsonToQueryString(query));
 
-export const api = (host, book, init) => _.mapValues(book, (value, key) => (path, query, body) => createFetch({
+export const api = (host, book, init) => _.mapValues(book, (value, key) => ({path, query, body}) => createFetch({
         "url": url(host, book[key].url, path, query),
         "method": book[key].method,
         "init": init,
@@ -38,7 +38,7 @@ export const api = (host, book, init) => _.mapValues(book, (value, key) => (path
     }, book[key].response.type)
 );
 
-export const apiTest = (host, book, init) => _.mapValues(book, (value, key) => (path, query, body) => createFetch({
+export const apiTest = (host, book, init) => _.mapValues(book, (value, key) => ({path, query, body}) => createFetch({
         "url": url(host, book[key].url, book[key].request.path, book[key].request.query),
         "method": book[key].method,
         "init": init,
@@ -46,7 +46,7 @@ export const apiTest = (host, book, init) => _.mapValues(book, (value, key) => (
     }, book[key].response.type)
 );
 
-export const apiRedux = (host, book, init) => _.mapValues(book, (value, key) => (path, query, body) => require('./fetchCreatorsRedux').createFetch({
+export const apiRedux = (host, book, init) => _.mapValues(book, (value, key) => ({path, query, body}) => require('./fetchCreatorsRedux').createFetch({
         "url": url(host, book[key].url, path, query),
         "method": book[key].method,
         "init": init,
@@ -54,7 +54,7 @@ export const apiRedux = (host, book, init) => _.mapValues(book, (value, key) => 
     }, book[key].response.type)
 );
 
-export default (host, book, init, option) => _.mapValues(book, (value, key) => (path, query, body) => {
+export default (host, book, init, option) => _.mapValues(book, (value, key) => ({path, query, body}) => {
 
         let useFetch = createFetch;
 

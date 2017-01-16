@@ -1,10 +1,11 @@
 {
   "name": "api-book",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
+    "build": "webpack --watch --progress --colors",
     "test": "mocha './test' --compilers js:babel-register --recursive",
     "test:watch": "npm test -- --watch",
     "prepublish": "babel src --out-dir lib"
@@ -19,6 +20,17 @@
     "Readme.md",
     "index.js",
     "lib/"
+  ],
+  "keywords": [
+    "api",
+    "fetch",
+    "book",
+    "api-book",
+    "swagger",
+    "es6",
+    "promise",
+    "node.js",
+    "javascript"
   ],
   "repository": {
     "type": "git",

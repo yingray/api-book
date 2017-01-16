@@ -17161,205 +17161,6 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-// the whatwg-fetch polyfill installs the fetch() function
-// on the global object (window or self)
-//
-// Return that as the export for use in Webpack, Browserify etc.
-__webpack_require__(10);
-module.exports = self.fetch.bind(self);
-
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _index = __webpack_require__(3);
-
-var _index2 = _interopRequireDefault(_index);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// import api from 'api-book'
-
-var host = "http://localhost:9000";
-
-var book = {
-    intro: {
-        url: '/api/intro/{{testId}}',
-        method: 'GET',
-        request: {
-            path: {},
-            query: {},
-            body: {}
-        },
-        response: {
-            type: 'json'
-        }
-    }
-};
-
-var init = {
-    "headers": {
-        "Accept": "application/json",
-        "Content-type": "application/json;charset=UTF-8"
-    },
-    "credentials": "include"
-};
-
-exports.default = (0, _index2.default)(host, book, init);
-
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(4);
-
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.apiRedux = exports.apiTest = exports.api = exports.url = exports.jsonToQueryString = exports.objectIsEmpty = exports.isEmpty = undefined;
-
-var _lodash = __webpack_require__(0);
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-var _mustache = __webpack_require__(7);
-
-var _mustache2 = _interopRequireDefault(_mustache);
-
-var _fetchCreators = __webpack_require__(5);
-
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
-}
-
-var isEmpty = exports.isEmpty = function isEmpty(value) {
-    return value === undefined || value === null || value === '';
-};
-var objectIsEmpty = exports.objectIsEmpty = function objectIsEmpty(obj) {
-    return Object.keys(obj).length === 0;
-};
-
-var jsonToQueryString = exports.jsonToQueryString = function jsonToQueryString(obj) {
-    var qs = _lodash2.default.reduce(obj, function (result, value, key) {
-        if (!_lodash2.default.isNull(value) && !_lodash2.default.isUndefined(value)) {
-            if (_lodash2.default.isArray(value)) {
-                result += _lodash2.default.reduce(value, function (result1, value1) {
-                    if (!_lodash2.default.isNull(value1) && !_lodash2.default.isUndefined(value1)) {
-                        result1 += key + '=' + value1 + '&';
-                        return result1;
-                    } else {
-                        return result1;
-                    }
-                }, '');
-            } else {
-                result += key + '=' + value + '&';
-            }
-            return result;
-        } else {
-            return result;
-        }
-    }, '').slice(0, -1);
-    return '?' + qs;
-};
-
-var url = exports.url = function url(host, _url, path, query) {
-    return host + _mustache2.default.render(_url, path) + (isEmpty(query) ? '' : jsonToQueryString(query));
-};
-
-var api = exports.api = function api(host, book, init) {
-    return _lodash2.default.mapValues(book, function (value, key) {
-        return function (path, query, body) {
-            return (0, _fetchCreators.createFetch)({
-                "url": url(host, book[key].url, path, query),
-                "method": book[key].method,
-                "init": init,
-                "body": isEmpty(body) ? null : body
-            }, book[key].response.type);
-        };
-    });
-};
-
-var apiTest = exports.apiTest = function apiTest(host, book, init) {
-    return _lodash2.default.mapValues(book, function (value, key) {
-        return function (path, query, body) {
-            return (0, _fetchCreators.createFetch)({
-                "url": url(host, book[key].url, book[key].request.path, book[key].request.query),
-                "method": book[key].method,
-                "init": init,
-                "body": isEmpty(book[key].request.body) ? null : book[key].request.body
-            }, book[key].response.type);
-        };
-    });
-};
-
-var apiRedux = exports.apiRedux = function apiRedux(host, book, init) {
-    return _lodash2.default.mapValues(book, function (value, key) {
-        return function (path, query, body) {
-            return __webpack_require__(6).createFetch({
-                "url": url(host, book[key].url, path, query),
-                "method": book[key].method,
-                "init": init,
-                "body": isEmpty(body) ? null : body
-            }, book[key].response.type);
-        };
-    });
-};
-
-exports.default = function (host, book, init, option) {
-    return _lodash2.default.mapValues(book, function (value, key) {
-        return function (path, query, body) {
-
-            var useFetch = _fetchCreators.createFetch;
-
-            var useBook = book[key];
-            useBook.request = {
-                path: objectIsEmpty(path) ? '' : book[key].request.path,
-                query: objectIsEmpty(query) ? '' : book[key].request.query,
-                body: objectIsEmpty(body) ? '' : book[key].request.body
-            };
-
-            if (option !== 'testing') {
-                useBook.request = {
-                    path: objectIsEmpty(path) ? '' : path,
-                    query: objectIsEmpty(query) ? '' : query,
-                    body: objectIsEmpty(body) ? '' : body
-                };
-            } else if (option === 'redux') {
-                useFetch = __webpack_require__(6).createFetch;
-            }
-
-            return useFetch({
-                "url": url(host, useBook.url, useBook.request.path, useBook.request.query),
-                "method": useBook.method,
-                "init": init,
-                "body": isEmpty(useBook.request.body) ? null : useBook.request.body
-            }, useBook.response.type);
-        };
-    });
-};
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
 "use strict";
 
 
@@ -17368,76 +17169,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.createFetch = undefined;
 
-__webpack_require__(1);
-
-var _lodash = __webpack_require__(0);
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
-}
-
-var createQuery = function createQuery(method, body, init) {
-
-    var query = {
-        "method": method
-    };
-
-    if (init) {
-        query = _lodash2.default.merge(query, init);
-    } else {
-        query = _lodash2.default.merge(query, {
-            "headers": {
-                "Accept": "application/json",
-                "Content-type": "application/json;charset=UTF-8"
-            },
-            "credentials": "include"
-        });
-    }
-
-    if (body) query.body = JSON.stringify(body);
-
-    return query;
-};
-
-var checkStatus = function checkStatus(response) {
-    if (response.status < 300 || response.ok || response.statusText === 'OK') {
-        return response;
-    } else {
-        throw response;
-    }
-};
-
-var handleError = function handleError(error) {
-    console.log('FetchCreator Catches Error!');
-    console.log(error);
-    throw error;
-};
-
-var createFetch = exports.createFetch = function createFetch(param, responseMixin) {
-    return fetch(param.url, createQuery(param.method, param.body, param.init)).then(function (response) {
-        return checkStatus(response);
-    }).then(function (response) {
-        return responseMixin ? response[responseMixin]() : response;
-    }).catch(function (error) {
-        return handleError(error);
-    });
-};
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.createFetch = undefined;
-
-__webpack_require__(1);
+__webpack_require__(2);
 
 var _lodash = __webpack_require__(0);
 
@@ -17509,6 +17241,274 @@ var createFetch = exports.createFetch = function createFetch(param, responseMixi
             return dispatch(handleError(error));
         });
     };
+};
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+// the whatwg-fetch polyfill installs the fetch() function
+// on the global object (window or self)
+//
+// Return that as the export for use in Webpack, Browserify etc.
+__webpack_require__(10);
+module.exports = self.fetch.bind(self);
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _index = __webpack_require__(4);
+
+var _index2 = _interopRequireDefault(_index);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// import api from 'api-book'
+
+var host = "http://localhost:9000";
+
+var book = {
+    intro: {
+        url: '/api/intro/{{testId}}',
+        method: 'GET',
+        request: {
+            path: {},
+            query: {},
+            body: {}
+        },
+        response: {
+            type: 'json'
+        }
+    }
+};
+
+var init = {
+    "headers": {
+        "Accept": "application/json",
+        "Content-type": "application/json;charset=UTF-8"
+    },
+    "credentials": "include"
+};
+
+exports.default = (0, _index2.default)(host, book, init);
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(5);
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.apiRedux = exports.apiTest = exports.api = exports.url = exports.jsonToQueryString = exports.objectIsEmpty = exports.isEmpty = undefined;
+
+var _lodash = __webpack_require__(0);
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _mustache = __webpack_require__(7);
+
+var _mustache2 = _interopRequireDefault(_mustache);
+
+var _fetchCreators = __webpack_require__(6);
+
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
+
+var isEmpty = exports.isEmpty = function isEmpty(value) {
+    return value === undefined || value === null || value === '';
+};
+var objectIsEmpty = exports.objectIsEmpty = function objectIsEmpty(obj) {
+    return Object.keys(obj).length === 0;
+};
+
+var jsonToQueryString = exports.jsonToQueryString = function jsonToQueryString(obj) {
+    var qs = _lodash2.default.reduce(obj, function (result, value, key) {
+        if (!_lodash2.default.isNull(value) && !_lodash2.default.isUndefined(value)) {
+            if (_lodash2.default.isArray(value)) {
+                result += _lodash2.default.reduce(value, function (result1, value1) {
+                    if (!_lodash2.default.isNull(value1) && !_lodash2.default.isUndefined(value1)) {
+                        result1 += key + '=' + value1 + '&';
+                        return result1;
+                    } else {
+                        return result1;
+                    }
+                }, '');
+            } else {
+                result += key + '=' + value + '&';
+            }
+            return result;
+        } else {
+            return result;
+        }
+    }, '').slice(0, -1);
+    return '?' + qs;
+};
+
+var url = exports.url = function url(host, _url, path, query) {
+    return host + _mustache2.default.render(_url, path) + (isEmpty(query) ? '' : jsonToQueryString(query));
+};
+
+var api = exports.api = function api(host, book, init) {
+    return _lodash2.default.mapValues(book, function (value, key) {
+        return function (path, query, body) {
+            return (0, _fetchCreators.createFetch)({
+                "url": url(host, book[key].url, path, query),
+                "method": book[key].method,
+                "init": init,
+                "body": isEmpty(body) ? null : body
+            }, book[key].response.type);
+        };
+    });
+};
+
+var apiTest = exports.apiTest = function apiTest(host, book, init) {
+    return _lodash2.default.mapValues(book, function (value, key) {
+        return function (path, query, body) {
+            return (0, _fetchCreators.createFetch)({
+                "url": url(host, book[key].url, book[key].request.path, book[key].request.query),
+                "method": book[key].method,
+                "init": init,
+                "body": isEmpty(book[key].request.body) ? null : book[key].request.body
+            }, book[key].response.type);
+        };
+    });
+};
+
+var apiRedux = exports.apiRedux = function apiRedux(host, book, init) {
+    return _lodash2.default.mapValues(book, function (value, key) {
+        return function (path, query, body) {
+            return __webpack_require__(1).createFetch({
+                "url": url(host, book[key].url, path, query),
+                "method": book[key].method,
+                "init": init,
+                "body": isEmpty(body) ? null : body
+            }, book[key].response.type);
+        };
+    });
+};
+
+exports.default = function (host, book, init, option) {
+    return _lodash2.default.mapValues(book, function (value, key) {
+        return function (path, query, body) {
+
+            var useFetch = _fetchCreators.createFetch;
+
+            var useBook = book[key];
+            useBook.request = {
+                path: objectIsEmpty(path) ? '' : book[key].request.path,
+                query: objectIsEmpty(query) ? '' : book[key].request.query,
+                body: objectIsEmpty(body) ? '' : book[key].request.body
+            };
+
+            if (option !== 'testing') {
+                useBook.request = {
+                    path: objectIsEmpty(path) ? '' : path,
+                    query: objectIsEmpty(query) ? '' : query,
+                    body: objectIsEmpty(body) ? '' : body
+                };
+            } else if (option === 'redux') {
+                useFetch = __webpack_require__(1).createFetch;
+            }
+
+            return useFetch({
+                "url": url(host, useBook.url, useBook.request.path, useBook.request.query),
+                "method": useBook.method,
+                "init": init,
+                "body": isEmpty(useBook.request.body) ? null : useBook.request.body
+            }, useBook.response.type);
+        };
+    });
+};
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.createFetch = undefined;
+
+__webpack_require__(2);
+
+var _lodash = __webpack_require__(0);
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
+
+var createQuery = function createQuery(method, body, init) {
+
+    var query = {
+        "method": method
+    };
+
+    if (init) {
+        query = _lodash2.default.merge(query, init);
+    } else {
+        query = _lodash2.default.merge(query, {
+            "headers": {
+                "Accept": "application/json",
+                "Content-type": "application/json;charset=UTF-8"
+            },
+            "credentials": "include"
+        });
+    }
+
+    if (body) query.body = JSON.stringify(body);
+
+    return query;
+};
+
+var checkStatus = function checkStatus(response) {
+    if (response.status < 300 || response.ok || response.statusText === 'OK') {
+        return response;
+    } else {
+        throw response;
+    }
+};
+
+var handleError = function handleError(error) {
+    console.log('FetchCreator Catches Error!');
+    console.log(error);
+    throw error;
+};
+
+var createFetch = exports.createFetch = function createFetch(param, responseMixin) {
+    return fetch(param.url, createQuery(param.method, param.body, param.init)).then(function (response) {
+        return checkStatus(response);
+    }).then(function (response) {
+        return responseMixin ? response[responseMixin]() : response;
+    }).catch(function (error) {
+        return handleError(error);
+    });
 };
 
 /***/ },
@@ -18669,7 +18669,7 @@ module.exports = function(module) {
 "use strict";
 
 
-var _book = __webpack_require__(2);
+var _book = __webpack_require__(3);
 
 var _book2 = _interopRequireDefault(_book);
 
@@ -18678,7 +18678,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var text = document.querySelector('.mdl-card__supporting-text');
 
 window.testApi = function () {
-    _book2.default.intro('', '', '').then(function (response) {
+    _book2.default.intro().then(function (response) {
         text.innerHTML = JSON.stringify(response);
     }).catch(function (error) {
         console.log(error);
