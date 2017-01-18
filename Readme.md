@@ -6,7 +6,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/yingray/api-book/badge.svg?branch=master)](https://coveralls.io/github/yingray/api-book?branch=master)
 [![dependencies Status](https://david-dm.org/yingray/api-book/status.svg)](https://david-dm.org/yingray/api-book)
 
-For Front-End Development, this library is easy to generate API fetch automatically by json ONLY!
+**For Front-End Development, this library is easy to generate API fetch automatically by json ONLY!**
 
 This library provide the useful featues to generate API fetch objects automatically by **json files(book)**, which back-end developer updated and maintained. Not only reduce communication costs of front-end and back-end, that need to synchronize information of RESTful API frequently, but increase program accuracy.
 
@@ -18,11 +18,14 @@ const book = {
         url: '/api/user/{{userId}}/profile',
         method: 'GET',
         request: {
+            header: {
+                clientId: 'tsfhlkjswifqWERWERGvdsfaf'
+            },
             path: {
-                	userId: 536251
+                userId: 536251
             },
             query: {
-            		picId: 12345
+                picId: 12345
             },
             body: {}
         },
@@ -101,7 +104,7 @@ Generate Api-book fetch and give appropriate parameters:
 
 ```js
 import api from 'api-book';
-export default api(host, book, init);
+export default api({ host, book, init });
 ```
 
 In order to send the API, import the above output modules and call each other the desired API in the module:	
@@ -109,17 +112,16 @@ In order to send the API, import the above output modules and call each other th
 ```js
 import api from './book.js';
 
-const path = {
-    userId: 536251
+const request = {
+    path: {
+        userId: 536251
+    },
+    query: {
+        picId: 12345
+    }
 };
 	
-const query = {
-    picId: 12345
-};
-	
-const body = '';
-	
-api.getUserPicture(path, query, body)
+api.getUserPicture(request)
     .then(response => {
         /*
             We build Reactions for calling APIs that works successfully
@@ -137,6 +139,14 @@ Finally, that will generate the fetch object automatically to call API which lin
 
 ```
 http://localhost:9000/api/user/536251/profile?picId=12345 (method: GET)
+```
+
+## Testing 
+
+If you want to test the api that is working with server-side providing request data, change the option param while you generate Api-book fetch:
+
+```js
+export default api({ host, book, init, option: { testing: true } });
 ```
 
 ## Example
