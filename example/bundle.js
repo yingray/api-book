@@ -17167,93 +17167,135 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.createFetch = undefined;
 
-__webpack_require__(2);
+var _api = __webpack_require__(13);
 
-var _lodash = __webpack_require__(0);
+// import api from 'api-book'
 
-var _lodash2 = _interopRequireDefault(_lodash);
-
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
-}
-
-var loadingStartAction = function loadingStartAction() {
-    return { type: 'UTILS_LOADING_START' };
-};
-
-var loadingEndAction = function loadingEndAction() {
-    return { type: 'UTILS_LOADING_END' };
-};
-
-var createQuery = function createQuery(method, body, init) {
-
-    var query = {
-        "method": method
-    };
-
-    if (init) {
-        query = _lodash2.default.merge(query, init);
-    } else {
-        query = _lodash2.default.merge(query, {
-            "headers": {
-                "Accept": "application/json",
-                "Content-type": "application/json;charset=UTF-8"
+exports.default = (0, _api.api)({
+    host: "http://localhost:9000",
+    init: {
+        headers: {
+            Accept: "application/json",
+            'Content-type': "application/json;charset=UTF-8"
+        },
+        credentials: "include"
+    },
+    book: {
+        intro: {
+            url: '/api/intro/{{testId}}',
+            method: 'GET',
+            request: {
+                header: { clientId: 'tsfhlkjswifqWERWERGvdsfaf' },
+                path: { testId: '123456' },
+                query: { a: 1 },
+                body: { b: 2 }
             },
-            "credentials": "include"
-        });
-    }
-
-    if (body) query.body = JSON.stringify(body);
-
-    return query;
-};
-
-var checkStatus = function checkStatus(response) {
-    return function (dispatch) {
-        if (response.status < 300 || response.ok || response.statusText === 'OK') {
-            dispatch(loadingEndAction());
-            return response;
-        } else {
-            throw response;
+            response: { type: 'json' }
+        },
+        message: {
+            url: '/api/message',
+            method: 'GET',
+            response: { type: 'json' }
         }
-    };
-};
-
-var handleError = function handleError(error) {
-    return function (dispatch) {
-        console.log('FetchCreator Catches Error!');
-        console.log(error);
-        dispatch(loadingEndAction());
-        throw error;
-    };
-};
-
-var createFetch = exports.createFetch = function createFetch(param, responseMixin) {
-    return function (dispatch) {
-        dispatch(loadingStartAction());
-        return fetch(param.url, createQuery(param.method, param.body, param.init)).then(function (response) {
-            return dispatch(checkStatus(response));
-        }).then(function (response) {
-            return responseMixin ? response[responseMixin]() : response;
-        }).catch(function (error) {
-            return dispatch(handleError(error));
-        });
-    };
-};
+    },
+    option: {
+        type: 'xhr',
+        testing: false
+    }
+});
 
 /***/ },
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-// the whatwg-fetch polyfill installs the fetch() function
-// on the global object (window or self)
-//
-// Return that as the export for use in Webpack, Browserify etc.
-__webpack_require__(10);
-module.exports = self.fetch.bind(self);
+"use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _lodash = __webpack_require__(0);
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _mustache = __webpack_require__(7);
+
+var _mustache2 = _interopRequireDefault(_mustache);
+
+var _tools = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var configureServices = function configureServices(_ref) {
+    var host = _ref.host,
+        init = _ref.init,
+        option = _ref.option,
+        actualRequest = _ref.actualRequest,
+        url = _ref.url,
+        method = _ref.method,
+        request = _ref.request,
+        response = _ref.response;
+
+
+    var defaultInit = {
+        "headers": {
+            "Accept": "application/json",
+            "Content-type": "application/json;charset=UTF-8"
+        },
+        "credentials": "include"
+    };
+
+    var requestChoice = option.testing ? request : actualRequest;
+
+    var getUrl = function getUrl(_ref2) {
+        var host = _ref2.host,
+            url = _ref2.url,
+            requestChoice = _ref2.requestChoice;
+
+        var finalUrl = void 0;
+        try {
+            finalUrl = host + _mustache2.default.render(url, requestChoice.path) + ((0, _tools.isEmpty)(requestChoice.query) ? '' : (0, _tools.jsonToQueryString)(requestChoice.query));
+        } catch (e) {
+            console.error('[Api-Book] Please give the path\'s params!');
+            console.error(e);
+        }
+        return finalUrl;
+    };
+
+    var getInit = function getInit(_ref3) {
+        var method = _ref3.method,
+            requestChoice = _ref3.requestChoice,
+            _ref3$init = _ref3.init,
+            init = _ref3$init === undefined ? defaultInit : _ref3$init;
+
+
+        var query = _lodash2.default.merge({ method: method }, init);
+
+        if (requestChoice.body) {
+            query = _lodash2.default.merge({ body: requestChoice.body }, query);
+            // JSON.stringify(body)
+        }
+
+        if (requestChoice.header) {
+            query = _lodash2.default.merge({ headers: requestChoice.header }, query);
+        }
+
+        return query;
+    };
+
+    var config = {
+        url: getUrl({ host: host, url: url, requestChoice: requestChoice }),
+        init: getInit({ method: method, requestChoice: requestChoice, init: init }),
+        responseMixin: response.type,
+        optionType: option.type
+    };
+
+    return config;
+};
+
+exports.default = configureServices;
 
 /***/ },
 /* 3 */
@@ -17265,52 +17307,51 @@ module.exports = self.fetch.bind(self);
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.createFetch = undefined;
 
-var _index = __webpack_require__(4);
+__webpack_require__(6);
 
-var _index2 = _interopRequireDefault(_index);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// import api from 'api-book'
-
-var host = "http://localhost:9000";
-
-var book = {
-    intro: {
-        url: '/api/intro/{{testId}}',
-        method: 'GET',
-        request: {
-            path: {},
-            query: {},
-            body: {}
-        },
-        response: {
-            type: 'json'
-        }
+var checkStatus = function checkStatus(response) {
+    if (response.status < 300 || response.ok || response.statusText === 'OK') {
+        return response;
+    } else {
+        throw response;
     }
 };
 
-var init = {
-    "headers": {
-        "Accept": "application/json",
-        "Content-type": "application/json;charset=UTF-8"
-    },
-    "credentials": "include"
+var handleError = function handleError(error) {
+    console.log('FetchCreator Catches Error!');
+    console.log(error);
+    throw error;
 };
 
-exports.default = (0, _index2.default)(host, book, init);
+var createFetch = exports.createFetch = function createFetch(_ref) {
+    var url = _ref.url,
+        init = _ref.init,
+        responseMixin = _ref.responseMixin,
+        optionType = _ref.optionType;
+
+    if (optionType === 'xhr') {
+        __webpack_require__(12);
+    }
+    return fetch(url, init).then(function (response) {
+        return checkStatus(response);
+    }).then(function (response) {
+        return responseMixin ? response[responseMixin]() : response;
+    }).catch(function (error) {
+        return handleError(error);
+    });
+};
+
+// export const createFetch = (param, responseMixin) => {
+//     return fetch(param.url, createQuery(param.method, param.body, param.init))
+//         .then(response => checkStatus(response))
+//         .then(response => responseMixin ? response[responseMixin]() : response)
+//         .catch(error => handleError(error))
+// }
 
 /***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = __webpack_require__(5);
-
-/***/ },
+/* 4 */,
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -17320,25 +17361,18 @@ module.exports = __webpack_require__(5);
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.apiRedux = exports.apiTest = exports.api = exports.url = exports.jsonToQueryString = exports.objectIsEmpty = exports.isEmpty = undefined;
+exports.jsonToQueryString = exports.objectIsEmpty = exports.isEmpty = undefined;
 
 var _lodash = __webpack_require__(0);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _mustache = __webpack_require__(7);
-
-var _mustache2 = _interopRequireDefault(_mustache);
-
-var _fetchCreators = __webpack_require__(6);
-
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var isEmpty = exports.isEmpty = function isEmpty(value) {
     return value === undefined || value === null || value === '';
 };
+
 var objectIsEmpty = exports.objectIsEmpty = function objectIsEmpty(obj) {
     return Object.keys(obj).length === 0;
 };
@@ -17366,150 +17400,17 @@ var jsonToQueryString = exports.jsonToQueryString = function jsonToQueryString(o
     return '?' + qs;
 };
 
-var url = exports.url = function url(host, _url, path, query) {
-    return host + _mustache2.default.render(_url, path) + (isEmpty(query) ? '' : jsonToQueryString(query));
-};
-
-var api = exports.api = function api(host, book, init) {
-    return _lodash2.default.mapValues(book, function (value, key) {
-        return function (path, query, body) {
-            return (0, _fetchCreators.createFetch)({
-                "url": url(host, book[key].url, path, query),
-                "method": book[key].method,
-                "init": init,
-                "body": isEmpty(body) ? null : body
-            }, book[key].response.type);
-        };
-    });
-};
-
-var apiTest = exports.apiTest = function apiTest(host, book, init) {
-    return _lodash2.default.mapValues(book, function (value, key) {
-        return function (path, query, body) {
-            return (0, _fetchCreators.createFetch)({
-                "url": url(host, book[key].url, book[key].request.path, book[key].request.query),
-                "method": book[key].method,
-                "init": init,
-                "body": isEmpty(book[key].request.body) ? null : book[key].request.body
-            }, book[key].response.type);
-        };
-    });
-};
-
-var apiRedux = exports.apiRedux = function apiRedux(host, book, init) {
-    return _lodash2.default.mapValues(book, function (value, key) {
-        return function (path, query, body) {
-            return __webpack_require__(1).createFetch({
-                "url": url(host, book[key].url, path, query),
-                "method": book[key].method,
-                "init": init,
-                "body": isEmpty(body) ? null : body
-            }, book[key].response.type);
-        };
-    });
-};
-
-exports.default = function (host, book, init, option) {
-    return _lodash2.default.mapValues(book, function (value, key) {
-        return function (path, query, body) {
-
-            var useFetch = _fetchCreators.createFetch;
-
-            var useBook = book[key];
-            useBook.request = {
-                path: objectIsEmpty(path) ? '' : book[key].request.path,
-                query: objectIsEmpty(query) ? '' : book[key].request.query,
-                body: objectIsEmpty(body) ? '' : book[key].request.body
-            };
-
-            if (option !== 'testing') {
-                useBook.request = {
-                    path: objectIsEmpty(path) ? '' : path,
-                    query: objectIsEmpty(query) ? '' : query,
-                    body: objectIsEmpty(body) ? '' : body
-                };
-            } else if (option === 'redux') {
-                useFetch = __webpack_require__(1).createFetch;
-            }
-
-            return useFetch({
-                "url": url(host, useBook.url, useBook.request.path, useBook.request.query),
-                "method": useBook.method,
-                "init": init,
-                "body": isEmpty(useBook.request.body) ? null : useBook.request.body
-            }, useBook.response.type);
-        };
-    });
-};
-
 /***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-"use strict";
+// the whatwg-fetch polyfill installs the fetch() function
+// on the global object (window or self)
+//
+// Return that as the export for use in Webpack, Browserify etc.
+__webpack_require__(10);
+module.exports = self.fetch.bind(self);
 
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.createFetch = undefined;
-
-__webpack_require__(2);
-
-var _lodash = __webpack_require__(0);
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
-}
-
-var createQuery = function createQuery(method, body, init) {
-
-    var query = {
-        "method": method
-    };
-
-    if (init) {
-        query = _lodash2.default.merge(query, init);
-    } else {
-        query = _lodash2.default.merge(query, {
-            "headers": {
-                "Accept": "application/json",
-                "Content-type": "application/json;charset=UTF-8"
-            },
-            "credentials": "include"
-        });
-    }
-
-    if (body) query.body = JSON.stringify(body);
-
-    return query;
-};
-
-var checkStatus = function checkStatus(response) {
-    if (response.status < 300 || response.ok || response.statusText === 'OK') {
-        return response;
-    } else {
-        throw response;
-    }
-};
-
-var handleError = function handleError(error) {
-    console.log('FetchCreator Catches Error!');
-    console.log(error);
-    throw error;
-};
-
-var createFetch = exports.createFetch = function createFetch(param, responseMixin) {
-    return fetch(param.url, createQuery(param.method, param.body, param.init)).then(function (response) {
-        return checkStatus(response);
-    }).then(function (response) {
-        return responseMixin ? response[responseMixin]() : response;
-    }).catch(function (error) {
-        return handleError(error);
-    });
-};
 
 /***/ },
 /* 7 */
@@ -18669,7 +18570,7 @@ module.exports = function(module) {
 "use strict";
 
 
-var _book = __webpack_require__(3);
+var _book = __webpack_require__(1);
 
 var _book2 = _interopRequireDefault(_book);
 
@@ -18678,7 +18579,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var text = document.querySelector('.mdl-card__supporting-text');
 
 window.testApi = function () {
-    _book2.default.intro().then(function (response) {
+
+    var request = {
+        path: {
+            testId: ''
+        },
+        header: {
+            clientId: 'qwejfeqWEFGOWGKdlkasdjfasd'
+        }
+    };
+
+    _book2.default.intro(request).then(function (response) {
         text.innerHTML = JSON.stringify(response);
     }).catch(function (error) {
         console.log(error);
@@ -18686,5 +18597,530 @@ window.testApi = function () {
     });
 };
 
+var origOpen = XMLHttpRequest.prototype.open;
+XMLHttpRequest.prototype.open = function () {
+    console.log('request started!');
+    this.addEventListener('load', function () {
+        console.log('request completed!');
+        console.log(this.readyState); //will always be 4 (ajax is completed successfully)
+        // console.log(this.responseText); //whatever the response was
+    });
+    origOpen.apply(this, arguments);
+};
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+(function (self) {
+    'use strict';
+
+    /* Ignore browser's fetch object and use XHR!
+    if (self.fetch) {
+      return
+    }
+    */
+
+    var support = {
+        searchParams: 'URLSearchParams' in self,
+        iterable: 'Symbol' in self && 'iterator' in Symbol,
+        blob: 'FileReader' in self && 'Blob' in self && function () {
+            try {
+                new Blob();
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }(),
+        formData: 'FormData' in self,
+        arrayBuffer: 'ArrayBuffer' in self
+    };
+
+    if (support.arrayBuffer) {
+        var viewClasses = ['[object Int8Array]', '[object Uint8Array]', '[object Uint8ClampedArray]', '[object Int16Array]', '[object Uint16Array]', '[object Int32Array]', '[object Uint32Array]', '[object Float32Array]', '[object Float64Array]'];
+
+        var isDataView = function isDataView(obj) {
+            return obj && DataView.prototype.isPrototypeOf(obj);
+        };
+
+        var isArrayBufferView = ArrayBuffer.isView || function (obj) {
+            return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1;
+        };
+    }
+
+    function normalizeName(name) {
+        if (typeof name !== 'string') {
+            name = String(name);
+        }
+        if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+            throw new TypeError('Invalid character in header field name');
+        }
+        return name.toLowerCase();
+    }
+
+    function normalizeValue(value) {
+        if (typeof value !== 'string') {
+            value = String(value);
+        }
+        return value;
+    }
+
+    // Build a destructive iterator for the value list
+    function iteratorFor(items) {
+        var iterator = {
+            next: function next() {
+                var value = items.shift();
+                return { done: value === undefined, value: value };
+            }
+        };
+
+        if (support.iterable) {
+            iterator[Symbol.iterator] = function () {
+                return iterator;
+            };
+        }
+
+        return iterator;
+    }
+
+    function Headers(headers) {
+        this.map = {};
+
+        if (headers instanceof Headers) {
+            headers.forEach(function (value, name) {
+                this.append(name, value);
+            }, this);
+        } else if (headers) {
+            Object.getOwnPropertyNames(headers).forEach(function (name) {
+                this.append(name, headers[name]);
+            }, this);
+        }
+    }
+
+    Headers.prototype.append = function (name, value) {
+        name = normalizeName(name);
+        value = normalizeValue(value);
+        var oldValue = this.map[name];
+        this.map[name] = oldValue ? oldValue + ',' + value : value;
+    };
+
+    Headers.prototype['delete'] = function (name) {
+        delete this.map[normalizeName(name)];
+    };
+
+    Headers.prototype.get = function (name) {
+        name = normalizeName(name);
+        return this.has(name) ? this.map[name] : null;
+    };
+
+    Headers.prototype.has = function (name) {
+        return this.map.hasOwnProperty(normalizeName(name));
+    };
+
+    Headers.prototype.set = function (name, value) {
+        this.map[normalizeName(name)] = normalizeValue(value);
+    };
+
+    Headers.prototype.forEach = function (callback, thisArg) {
+        for (var name in this.map) {
+            if (this.map.hasOwnProperty(name)) {
+                callback.call(thisArg, this.map[name], name, this);
+            }
+        }
+    };
+
+    Headers.prototype.keys = function () {
+        var items = [];
+        this.forEach(function (value, name) {
+            items.push(name);
+        });
+        return iteratorFor(items);
+    };
+
+    Headers.prototype.values = function () {
+        var items = [];
+        this.forEach(function (value) {
+            items.push(value);
+        });
+        return iteratorFor(items);
+    };
+
+    Headers.prototype.entries = function () {
+        var items = [];
+        this.forEach(function (value, name) {
+            items.push([name, value]);
+        });
+        return iteratorFor(items);
+    };
+
+    if (support.iterable) {
+        Headers.prototype[Symbol.iterator] = Headers.prototype.entries;
+    }
+
+    function consumed(body) {
+        if (body.bodyUsed) {
+            return Promise.reject(new TypeError('Already read'));
+        }
+        body.bodyUsed = true;
+    }
+
+    function fileReaderReady(reader) {
+        return new Promise(function (resolve, reject) {
+            reader.onload = function () {
+                resolve(reader.result);
+            };
+            reader.onerror = function () {
+                reject(reader.error);
+            };
+        });
+    }
+
+    function readBlobAsArrayBuffer(blob) {
+        var reader = new FileReader();
+        var promise = fileReaderReady(reader);
+        reader.readAsArrayBuffer(blob);
+        return promise;
+    }
+
+    function readBlobAsText(blob) {
+        var reader = new FileReader();
+        var promise = fileReaderReady(reader);
+        reader.readAsText(blob);
+        return promise;
+    }
+
+    function readArrayBufferAsText(buf) {
+        var view = new Uint8Array(buf);
+        var chars = new Array(view.length);
+
+        for (var i = 0; i < view.length; i++) {
+            chars[i] = String.fromCharCode(view[i]);
+        }
+        return chars.join('');
+    }
+
+    function bufferClone(buf) {
+        if (buf.slice) {
+            return buf.slice(0);
+        } else {
+            var view = new Uint8Array(buf.byteLength);
+            view.set(new Uint8Array(buf));
+            return view.buffer;
+        }
+    }
+
+    function Body() {
+        this.bodyUsed = false;
+
+        this._initBody = function (body) {
+            this._bodyInit = body;
+            if (!body) {
+                this._bodyText = '';
+            } else if (typeof body === 'string') {
+                this._bodyText = body;
+            } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+                this._bodyBlob = body;
+            } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+                this._bodyFormData = body;
+            } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+                this._bodyText = body.toString();
+            } else if (support.arrayBuffer && support.blob && isDataView(body)) {
+                this._bodyArrayBuffer = bufferClone(body.buffer);
+                // IE 10-11 can't handle a DataView body.
+                this._bodyInit = new Blob([this._bodyArrayBuffer]);
+            } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
+                this._bodyArrayBuffer = bufferClone(body);
+            } else {
+                throw new Error('unsupported BodyInit type');
+            }
+
+            if (!this.headers.get('content-type')) {
+                if (typeof body === 'string') {
+                    this.headers.set('content-type', 'text/plain;charset=UTF-8');
+                } else if (this._bodyBlob && this._bodyBlob.type) {
+                    this.headers.set('content-type', this._bodyBlob.type);
+                } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+                    this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+                }
+            }
+        };
+
+        if (support.blob) {
+            this.blob = function () {
+                var rejected = consumed(this);
+                if (rejected) {
+                    return rejected;
+                }
+
+                if (this._bodyBlob) {
+                    return Promise.resolve(this._bodyBlob);
+                } else if (this._bodyArrayBuffer) {
+                    return Promise.resolve(new Blob([this._bodyArrayBuffer]));
+                } else if (this._bodyFormData) {
+                    throw new Error('could not read FormData body as blob');
+                } else {
+                    return Promise.resolve(new Blob([this._bodyText]));
+                }
+            };
+
+            this.arrayBuffer = function () {
+                if (this._bodyArrayBuffer) {
+                    return consumed(this) || Promise.resolve(this._bodyArrayBuffer);
+                } else {
+                    return this.blob().then(readBlobAsArrayBuffer);
+                }
+            };
+        }
+
+        this.text = function () {
+            var rejected = consumed(this);
+            if (rejected) {
+                return rejected;
+            }
+
+            if (this._bodyBlob) {
+                return readBlobAsText(this._bodyBlob);
+            } else if (this._bodyArrayBuffer) {
+                return Promise.resolve(readArrayBufferAsText(this._bodyArrayBuffer));
+            } else if (this._bodyFormData) {
+                throw new Error('could not read FormData body as text');
+            } else {
+                return Promise.resolve(this._bodyText);
+            }
+        };
+
+        if (support.formData) {
+            this.formData = function () {
+                return this.text().then(decode);
+            };
+        }
+
+        this.json = function () {
+            return this.text().then(JSON.parse);
+        };
+
+        return this;
+    }
+
+    // HTTP methods whose capitalization should be normalized
+    var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT'];
+
+    function normalizeMethod(method) {
+        var upcased = method.toUpperCase();
+        return methods.indexOf(upcased) > -1 ? upcased : method;
+    }
+
+    function Request(input, options) {
+        options = options || {};
+        var body = options.body;
+
+        if (typeof input === 'string') {
+            this.url = input;
+        } else {
+            if (input.bodyUsed) {
+                throw new TypeError('Already read');
+            }
+            this.url = input.url;
+            this.credentials = input.credentials;
+            if (!options.headers) {
+                this.headers = new Headers(input.headers);
+            }
+            this.method = input.method;
+            this.mode = input.mode;
+            if (!body && input._bodyInit != null) {
+                body = input._bodyInit;
+                input.bodyUsed = true;
+            }
+        }
+
+        this.credentials = options.credentials || this.credentials || 'omit';
+        if (options.headers || !this.headers) {
+            this.headers = new Headers(options.headers);
+        }
+        this.method = normalizeMethod(options.method || this.method || 'GET');
+        this.mode = options.mode || this.mode || null;
+        this.referrer = null;
+
+        if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+            throw new TypeError('Body not allowed for GET or HEAD requests');
+        }
+        this._initBody(body);
+    }
+
+    Request.prototype.clone = function () {
+        return new Request(this, { body: this._bodyInit });
+    };
+
+    function decode(body) {
+        var form = new FormData();
+        body.trim().split('&').forEach(function (bytes) {
+            if (bytes) {
+                var split = bytes.split('=');
+                var name = split.shift().replace(/\+/g, ' ');
+                var value = split.join('=').replace(/\+/g, ' ');
+                form.append(decodeURIComponent(name), decodeURIComponent(value));
+            }
+        });
+        return form;
+    }
+
+    function parseHeaders(rawHeaders) {
+        var headers = new Headers();
+        rawHeaders.split('\r\n').forEach(function (line) {
+            var parts = line.split(':');
+            var key = parts.shift().trim();
+            if (key) {
+                var value = parts.join(':').trim();
+                headers.append(key, value);
+            }
+        });
+        return headers;
+    }
+
+    Body.call(Request.prototype);
+
+    function Response(bodyInit, options) {
+        if (!options) {
+            options = {};
+        }
+
+        this.type = 'default';
+        this.status = 'status' in options ? options.status : 200;
+        this.ok = this.status >= 200 && this.status < 300;
+        this.statusText = 'statusText' in options ? options.statusText : 'OK';
+        this.headers = new Headers(options.headers);
+        this.url = options.url || '';
+        this._initBody(bodyInit);
+    }
+
+    Body.call(Response.prototype);
+
+    Response.prototype.clone = function () {
+        return new Response(this._bodyInit, {
+            status: this.status,
+            statusText: this.statusText,
+            headers: new Headers(this.headers),
+            url: this.url
+        });
+    };
+
+    Response.error = function () {
+        var response = new Response(null, { status: 0, statusText: '' });
+        response.type = 'error';
+        return response;
+    };
+
+    var redirectStatuses = [301, 302, 303, 307, 308];
+
+    Response.redirect = function (url, status) {
+        if (redirectStatuses.indexOf(status) === -1) {
+            throw new RangeError('Invalid status code');
+        }
+
+        return new Response(null, { status: status, headers: { location: url } });
+    };
+
+    self.Headers = Headers;
+    self.Request = Request;
+    self.Response = Response;
+
+    self.fetch = function (input, init) {
+        return new Promise(function (resolve, reject) {
+            var request = new Request(input, init);
+            var xhr = new XMLHttpRequest();
+
+            xhr.onload = function () {
+                var options = {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    headers: parseHeaders(xhr.getAllResponseHeaders() || '')
+                };
+                options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL');
+                var body = 'response' in xhr ? xhr.response : xhr.responseText;
+                resolve(new Response(body, options));
+            };
+
+            xhr.onerror = function () {
+                reject(new TypeError('Network request failed'));
+            };
+
+            xhr.ontimeout = function () {
+                reject(new TypeError('Network request failed'));
+            };
+
+            xhr.open(request.method, request.url, true);
+
+            if (request.credentials === 'include') {
+                xhr.withCredentials = true;
+            }
+
+            if ('responseType' in xhr && support.blob) {
+                xhr.responseType = 'blob';
+            }
+
+            request.headers.forEach(function (value, name) {
+                xhr.setRequestHeader(name, value);
+            });
+
+            xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit);
+        });
+    };
+    self.fetch.polyfill = true;
+})(typeof self !== 'undefined' ? self : undefined);
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.api = undefined;
+
+var _lodash = __webpack_require__(0);
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _fetchCreators = __webpack_require__(3);
+
+var _configureServices = __webpack_require__(2);
+
+var _configureServices2 = _interopRequireDefault(_configureServices);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var api = exports.api = function api(_ref) {
+    var host = _ref.host,
+        init = _ref.init,
+        book = _ref.book,
+        option = _ref.option;
+
+
+    var apiObj = _lodash2.default.mapValues(book, function (value, key) {
+        return function () {
+            var actualRequest = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+            return (0, _fetchCreators.createFetch)((0, _configureServices2.default)({
+                host: host,
+                init: init,
+                option: option,
+                actualRequest: actualRequest,
+                url: book[key].url,
+                method: book[key].method,
+                request: book[key].request,
+                response: book[key].response
+            }));
+        };
+    });
+
+    return apiObj;
+};
+
 /***/ }
 /******/ ]);
+//# sourceMappingURL=bundle.js.map

@@ -1,28 +1,34 @@
-import api from '../index'; // import api from 'api-book'
+import { api } from '../src/api'; // import api from 'api-book'
 
-const host = "http://localhost:9000";
-
-const book = {
-    intro: {
-        url: '/api/intro/{{testId}}',
-        method: 'GET',
-        request: {
-            path: {},
-            query: {},
-            body: {}
+export default api({
+    host: "http://localhost:9000",
+    init: {
+        headers: {
+            Accept: "application/json",
+            'Content-type': "application/json;charset=UTF-8",
         },
-        response: {
-            type: 'json'
-        }
-    }
-};
-
-const init = {
-    "headers": {
-        "Accept": "application/json",
-        "Content-type": "application/json;charset=UTF-8",
+        credentials: "include"
     },
-    "credentials": "include"
-};
-
-export default api(host, book, init);
+    book: {
+        intro: {
+            url: '/api/intro/{{testId}}',
+            method: 'GET',
+            request: {
+                header: { clientId: 'tsfhlkjswifqWERWERGvdsfaf' },
+                path: { testId: '123456' },
+                query: { a: 1 },
+                body: { b: 2 }
+            },
+            response: { type: 'json' }
+        },
+        message: {
+            url: '/api/message',
+            method: 'GET',
+            response: { type: 'json' }
+        }
+    },
+    option: {
+        type: 'xhr',
+        testing: false
+    }
+});

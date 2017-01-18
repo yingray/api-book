@@ -2,6 +2,7 @@
 const path = require('path');
 
 module.exports = {
+    devtool: 'cheap-module-source-map',
     entry: path.join(__dirname, 'example/index.js'),
     output: {
         path: path.join(__dirname, 'example/'),
