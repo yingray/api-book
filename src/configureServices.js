@@ -39,7 +39,7 @@ const configureServices = ({
         let query = _.merge({ method }, init);
 
         if (requestChoice.body) {
-            query = _.merge({ body: requestChoice.body }, query);
+            query = _.merge({ body: JSON.stringify(requestChoice.body) }, query);
             // JSON.stringify(body)
         }
 
