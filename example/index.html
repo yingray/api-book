@@ -1,42 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>API Book!</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
-    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-    <style>
-        .demo-card-square.mdl-card {
-            margin: 20px auto;
-            width: 320px;
-            height: 320px;
-        }
-
-        .demo-card-square > .mdl-card__title {
-            color: #fff;
-            background: url('https://getmdl.io/assets/demos/dog.png') bottom right 15% no-repeat #46B6AC;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Api-Book Demo</title>
 </head>
-<body>
-<div id="p3" class="mdl-progress mdl-js-progress" style="width: 100%;"></div>
-<div class="demo-card-square mdl-card mdl-shadow--2dp">
-    <div class="mdl-card__title mdl-card--expand">
-        <h2 class="mdl-card__title-text">Welcome to Api Book!</h2>
-    </div>
-    <div class="mdl-card__supporting-text">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        Aenan convallis.
-    </div>
-    <div class="mdl-card__actions mdl-card--border">
-        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="testApi()">
-            Click me!
-        </a>
-    </div>
-</div>
 
+<body>
+    <textarea id="textarea" cols="30" rows="10"></textarea><br>
+    <button onclick="handleClick()">Click me!</button>
+    <script src="./bundle.js"></script>
+    <script>
+        var book = {
+            GetPosts: {
+                url: '/posts/{{name}}',
+                method: 'POST',
+                payload: {
+                    query: {
+                        id: '{{id}}'
+                    },
+                    body: {
+                        form1: '{{form}}',
+                        form2: {
+                            a: '{{a}}',
+                            b: '{{b}}'
+                        },
+                        form3: ['{{c}}', '{{d}}']
+                    }
+                },
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json;charset=UTF-8',
+                    Authorization: 'Bearer {{accessToken}}'
+                },
+                options: {
+                    mode: 'cors'
+                }
+            }
+        }
+
+        var DemoApis = new ApiBook.ApiCreator(book, {
+            host: 'http://localhost:3000'
+        })
+
+        var requestParameters = {
+            id: 1
+        }
+
+        function handleClick() {
+            DemoApis.GetPosts(requestParameters)
+                .then(response => {
+                    console.log(response)
+                    return response.json()
+                })
+                .then(json => {
+                    document.getElementById('textarea').innerHTML = JSON.stringify(json)
+                })
+        }
+    </script>
 </body>
-<script src="./bundle.js"></script>
+
 </html>

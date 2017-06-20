@@ -1,20 +1,25 @@
-'use strict';
-const path = require('path');
+'use strict'
+const path = require('path')
 
 module.exports = {
-    devtool: 'cheap-module-source-map',
-    entry: path.join(__dirname, 'example/index.js'),
-    output: {
-        path: path.join(__dirname, 'example/'),
-        filename: 'bundle.js'
-    },
-    module: {
-        rules: [
-            {
-                exclude: /node_modules/,
-                test: /\.js$/,
-                loader: ['babel-loader']
-            }
-        ]
-    }
-};
+  devtool: 'cheap-module-source-map',
+  entry: ['babel-polyfill', './src/index.js'],
+  output: {
+    libraryTarget: 'var',
+    library: 'ApiBook',
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, './example')
+  },
+
+  module: {
+    rules: [
+      {
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        query: {
+          presets: ['es2015', 'stage-2']
+        }
+      }
+    ]
+  }
+}
