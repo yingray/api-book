@@ -1,6 +1,6 @@
 {
   "name": "api-book",
-  "version": "0.2.1",
+  "version": "0.2.1-alpha.1",
   "description": "For Front-End Development, this library is easy to generate API fetch automatically by json ONLY!",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "build": "webpack --watch --progress --colors",
     "test": "mocha './test' --compilers js:babel-register --recursive",
     "test:watch": "npm test -- --watch",
-    "prepublish": "babel src --out-dir lib",
+    "prepublish": "babel src --out-dir lib --presets es2015,stage-2",
     "mock": "json-server --watch ./server/db.json",
     "start2": "nodemon src/example/ --exec babel-node --presets es2015,stage-2"
   },

@@ -7,8 +7,8 @@ module.exports = {
   output: {
     libraryTarget: 'var',
     library: 'ApiBook',
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, './example')
+    filename: 'apiBook-0.2.0.js',
+    path: path.resolve(__dirname, './example/1-sample_web/js')
   },
 
   module: {

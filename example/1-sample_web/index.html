@@ -11,7 +11,8 @@
 <body>
     <textarea id="textarea" cols="30" rows="10"></textarea><br>
     <button onclick="handleClick()">Click me!</button>
-    <script src="./bundle.js"></script>
+    
+    <script src="./js/apiBook-0.2.0.js"></script>
     <script>
         var book = {
             GetPosts: {
@@ -19,7 +20,8 @@
                 method: 'POST',
                 payload: {
                     query: {
-                        id: '{{id}}'
+                        id: '{{id}}',
+                        form1: '{{form}}',
                     },
                     body: {
                         form1: '{{form}}',
@@ -27,7 +29,7 @@
                             a: '{{a}}',
                             b: '{{b}}'
                         },
-                        form3: ['{{c}}', '{{d}}']
+                        form3: ['{{form}}', '{{d}}']
                     }
                 },
                 headers: {
@@ -41,20 +43,27 @@
             }
         }
 
+        function sampleMiddleware(response) {
+            console.log(response)
+            return response.json()
+        }
+
         var DemoApis = new ApiBook.ApiCreator(book, {
-            host: 'http://localhost:3000'
+            host: 'http://localhost:3000',
+            fetchAndThen: [sampleMiddleware]
         })
 
         var requestParameters = {
-            id: 1
+            id: 1,
+            form: {
+                a: 1,
+                b: 2
+            },
+            accessToken: 'asdasd'
         }
 
         function handleClick() {
             DemoApis.GetPosts(requestParameters)
-                .then(response => {
-                    console.log(response)
-                    return response.json()
-                })
                 .then(json => {
                     document.getElementById('textarea').innerHTML = JSON.stringify(json)
                 })
