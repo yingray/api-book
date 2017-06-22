@@ -4,6 +4,7 @@ import * as Validation from './validation'
 import _ from 'lodash'
 import Mustache from 'mustache'
 import 'whatwg-fetch'
+import Immutable from 'immutable'
 class ApiCreator {
   constructor(book, options) {
     this.setMethods(book)
@@ -75,24 +76,26 @@ class ApiCreator {
       Validation.isParametersTypeRight(parameters) &&
       Validation.isParametersMatchChapterConfig(chapter, parameters)
     ) {
-      this.setObjectInjectedChapter(chapter, parameters)
-      const stringifyChapter = JSON.stringify(chapter)
+      const injectObjectToChapter = this.getObjectInjectedChapter(chapter, parameters)
+      const stringifyChapter = JSON.stringify(injectObjectToChapter)
       const injectedStringifyChapter = Mustache.render(stringifyChapter, parameters)
       const injectedChapter = JSON.parse(injectedStringifyChapter)
       return injectedChapter
     }
   }
 
-  setObjectInjectedChapter(chapter, parameters) {
+  getObjectInjectedChapter(chapter, parameters) {
+    const newChapter = Immutable.fromJS(chapter).toObject()
     _.map(parameters, (parametersValue, parametersKey) => {
       if (typeof parametersValue === 'object') {
         const findId = `{{${parametersKey}}}`
         const replaceObj = parametersValue
-        if (chapter.payload) {
-          this.findStringAndInject(chapter.payload, findId, replaceObj)
+        if (newChapter.payload) {
+          this.findStringAndInject(newChapter.payload, findId, replaceObj)
         }
       }
     })
+    return newChapter
   }
 
   findStringAndInject(obj, findId, replaceObj) {

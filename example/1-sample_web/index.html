@@ -11,7 +11,7 @@
 <body>
     <textarea id="textarea" cols="30" rows="10"></textarea><br>
     <button onclick="handleClick()">Click me!</button>
-    
+
     <script src="./js/apiBook-0.2.0.js"></script>
     <script>
         var book = {
@@ -20,16 +20,10 @@
                 method: 'POST',
                 payload: {
                     query: {
-                        id: '{{id}}',
-                        form1: '{{form}}',
+                        id: '{{id}}'
                     },
                     body: {
-                        form1: '{{form}}',
-                        form2: {
-                            a: '{{a}}',
-                            b: '{{b}}'
-                        },
-                        form3: ['{{form}}', '{{d}}']
+                        form1: '{{form}}'
                     }
                 },
                 headers: {
@@ -64,6 +58,16 @@
 
         function handleClick() {
             DemoApis.GetPosts(requestParameters)
+                .then(json => {
+                    document.getElementById('textarea').innerHTML = JSON.stringify(json)
+                })
+            DemoApis.GetPosts({
+                    id: 2,
+                    form: {
+                        c: 3,
+                        d: 4
+                    }
+                })
                 .then(json => {
                     document.getElementById('textarea').innerHTML = JSON.stringify(json)
                 })
