@@ -1,6 +1,6 @@
 {
   "name": "api-book",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "For Front-End Development, this library is easy to generate API fetch automatically by json ONLY!",
   "main": "index.js",
   "scripts": {
@@ -57,15 +57,15 @@
     "cors": "^2.8.1",
     "expect": "^1.20.2",
     "express": "^4.14.0",
-    "immutable": "^3.8.1",
     "json-server": "^0.10.1",
     "mocha": "^3.2.0",
-    "webpack": "^2.2.0",
-    "whatwg-fetch": "^2.0.3"
+    "webpack": "^2.2.0"
   },
   "dependencies": {
+    "immutable": "^3.8.1",
     "isomorphic-fetch": "^2.2.1",
-    "lodash": "^4.17.2",
-    "mustache": "^2.3.0"
+    "lodash": "^4.17.4",
+    "mustache": "^2.3.0",
+    "whatwg-fetch": "^2.0.3"
   }
 }
