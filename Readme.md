@@ -16,25 +16,28 @@ This library provide the useful featues to generate API fetch objects automatica
 // Easy to sync the APIs document from back-end using book!
 
 const book = {
-    getUserPicture: {
-        url: '/api/user/{{userId}}/profile',
-        method: 'GET',
-        request: {
-            header: {
-                clientId: 'tsfhlkjswifqWERWERGvdsfaf'
-            },
-            path: {
-                userId: 536251
-            },
-            query: {
-                picId: 12345
-            },
-            body: {}
-        },
-        response: {
-            type: 'json'
-        }
-    }
+    UpdatePost: {
+                url: '/posts/{{name}}',
+                method: 'POST',
+                payload: {
+                    query: {
+                        id: '{{id}}'
+                    },
+                    body: {
+                        form: '{{form}}',
+                        name: '{{name}}',
+                        age: '{{age}}'
+                    }
+                },
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json;charset=UTF-8',
+                    Authorization: 'Bearer {{accessToken}}'
+                },
+                options: {
+                    mode: 'cors'
+                }
+            }
 };
 ```
 
@@ -65,63 +68,59 @@ Create the desired API document(book):
 // book.js
 
 const book = {
-    getUserPicture: {
-        url: '/api/user/{{userId}}/profile',
-        method: 'GET',
-        request: {
-            path: {
-                userId: 536251
-            },
-            query: {
-            	picId: 12345
-            },
-            body: {}
-        },
-        response: {
-            type: 'json'
-        }
-    }
+    UpdatePost: {
+                url: '/posts/{{name}}',
+                method: 'POST',
+                payload: {
+                    query: {
+                        id: '{{id}}'
+                    },
+                    body: {
+                        form: '{{form}}',
+                        name: '{{name}},
+                        age: '{{age}}
+                    }
+                },
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json;charset=UTF-8',
+                    Authorization: 'Bearer {{accessToken}}'
+                },
+                options: {
+                    mode: 'cors'
+                }
+            }
 };
 ```
 
 Provide the appropriate host address:
 
 ```js
-const host = "http://localhost:9000";
-```
-
-Provide optional API parameters:
-
-```js
-const init = {
-    "headers": {
-        "Accept": "application/json",
-        "Content-type": "application/json;charset=UTF-8",
-    },
-    "credentials": "include"
-};
+const options: {
+    host: 'http://localhost:9000'
+} 
 ```
 
 Generate Api-book fetch and give appropriate parameters:
 
 ```js
-import api from 'api-book';
-export default api({ host, book, init });
+import ApiBook from 'api-book'
+const MyApis = new ApiBook.ApiCreator(book)
 ```
 
 In order to send the API, import the above output modules and call each other the desired API in the module:	
 
 ```js
-import api from './book.js';
-
 const request = {
-    path: {
-        userId: 536251
-    },
-    query: {
-        picId: 12345
-    }
-};
+   name: 'John',
+   age: 30,
+   id: 2000,
+   accessToken: 'token',
+   form: {
+       a: 1,
+       b: 2
+   }
+}
 	
 api.getUserPicture(request)
     .then(response => {
@@ -140,7 +139,18 @@ api.getUserPicture(request)
 Finally, that will generate the fetch object automatically to call API which link likes:
 
 ```
-http://localhost:9000/api/user/536251/profile?picId=12345 (method: GET)
+ENDPOINT:
+http://localhost:9000/posts/John?id=2000 (method: POST)
+--
+HEADERS:
+Accept: application/json,
+Content-Type: application/json;charset=UTF-8,
+Authorization: Bearer token
+--
+BODY: 
+form={a:1, b:2},
+name='John',
+age=30
 ```
 
 ## Testing 
