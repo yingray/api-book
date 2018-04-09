@@ -8,7 +8,7 @@
 
 **For Front-End Development, this library is easy to generate API fetch automatically by json ONLY!**
 
-![api-book flow chart](https://raw.githubusercontent.com/yingray/api-book/master/example/images/apibook_flow_chart.png)
+![api-book flow chart](https://raw.githubusercontent.com/yingray/api-book/master/doc/apibook_flow_chart.png)
 
 This library provide the useful featues to generate API fetch objects automatically by **json files(book)**, which back-end developer updated and maintained. Not only reduce communication costs of front-end and back-end, that need to synchronize information of RESTful API frequently, but increase program accuracy.
 

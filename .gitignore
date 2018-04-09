@@ -1,5 +1,10 @@
+# IDE
 .idea
-node_modules
-npm-debug.log
-lib
 .vscode
+
+# Node
+node_modules
+**/*.log
+
+# Build
+lib
